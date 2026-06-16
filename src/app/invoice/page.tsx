@@ -182,13 +182,13 @@ export default function InvoiceBuilder() {
         </div>
 
         {/* Right Column: Preview */}
-        <div className="lg:sticky lg:top-8 border-4 border-slate-100 rounded-xl overflow-hidden bg-slate-100 p-2 sm:p-4">
-          <div className="bg-slate-100 pb-2 flex justify-between items-center px-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Live Preview</span>
-            <span className="text-xs text-slate-400">A4 Format</span>
+        <div className="lg:sticky lg:top-8 border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex flex-col h-[calc(100vh-4rem)]">
+          <div className="bg-slate-100 p-3 flex justify-between items-center border-b border-slate-200 shrink-0">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Live Preview</span>
+            <span className="text-xs font-medium text-slate-400 bg-white px-2 py-1 rounded shadow-sm">A4 Format</span>
           </div>
-          <div className="overflow-x-auto">
-            <div className="min-w-[800px] origin-top-left transform scale-[0.6] sm:scale-[0.8] lg:scale-90 xl:scale-100 transition-transform">
+          <div className="overflow-auto flex-1 p-4 sm:p-8 bg-slate-200/50 flex justify-center items-start">
+            <div className="shrink-0 shadow-xl ring-1 ring-slate-900/5">
               <InvoicePreview data={watchAllFields} />
             </div>
           </div>

@@ -17,7 +17,7 @@ export function InvoicePreview({ data }: InvoicePreviewProps) {
   const formattedIssueDate = data.issueDate ? format(new Date(data.issueDate), 'MMM dd, yyyy') : '';
   const formattedDueDate = data.dueDate ? format(new Date(data.dueDate), 'MMM dd, yyyy') : '';
 
-  let containerClass = "bg-white p-8 sm:p-12 min-h-[800px] shadow-sm ring-1 ring-slate-200 text-slate-900 font-sans text-sm ";
+  let containerClass = "bg-white p-8 sm:p-12 w-[794px] min-h-[1123px] shadow-sm ring-1 ring-slate-200 text-slate-900 font-sans text-sm mx-auto bg-white ";
   if (data.templateStyle === 'bold') {
     containerClass += "font-sans border-t-[16px] border-black text-gray-900";
   } else if (data.templateStyle === 'classic') {

@@ -164,7 +164,7 @@ export default function Home() {
             By leveraging Vercel's serverless edge and the Next.js App Router, InvoFlow operates with zero fixed server costs while delivering premium features like OCR and Machine Learning.
           </p>
           <div className="inline-flex items-center gap-2 text-slate-500 font-medium">
-            <span>Built with ❤️ by the Open Source Community</span>
+            <span>Developed and Design by Abhranil Sinhgha Roy</span>
           </div>
         </div>
       </section>

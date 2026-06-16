@@ -159,7 +159,7 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
               <select 
                 id="templateStyle" 
                 {...register("templateStyle")}
-                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="flex h-10 w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <option value="minimal">Minimal</option>
                 <option value="bold">Bold</option>
@@ -172,7 +172,7 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
                 <select 
                   id="currency" 
                   {...register("currency")}
-                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+                    className="flex h-10 w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
@@ -224,7 +224,7 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
             <textarea
               id="notes"
               {...register("notes")}
-              className="flex min-h-[80px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-transparent mt-2"
+              className="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 mt-2"
               placeholder="Thanks for your business!"
             />
           </div>
@@ -233,7 +233,7 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
             <textarea
               id="paymentTerms"
               {...register("paymentTerms")}
-              className="flex min-h-[80px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-transparent mt-2"
+              className="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 mt-2"
               placeholder="Please pay within 15 days using the link provided."
             />
           </div>

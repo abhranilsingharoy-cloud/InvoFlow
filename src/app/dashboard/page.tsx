@@ -24,8 +24,8 @@ export default async function Dashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Overview of your business and AI predictions.</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Overview of your business and AI predictions.</p>
         </div>
         <Link href="/invoice">
           <Button>Create New Invoice</Button>
@@ -33,36 +33,36 @@ export default async function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 mb-2">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
             <FileText className="w-5 h-5 text-blue-500" />
             <h3 className="font-semibold">Total Revenue Generated</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{formatCurrency(totalRevenue, "USD")}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(totalRevenue, "USD")}</p>
         </div>
         
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 mb-2">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
             <CheckCircle2 className="w-5 h-5 text-green-500" />
             <h3 className="font-semibold">Pending Invoices</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{pendingCount}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">{pendingCount}</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-500 mb-2">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
             <AlertCircle className="w-5 h-5 text-orange-500" />
             <h3 className="font-semibold">Avg. Late Payment Risk</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{(avgRisk * 100).toFixed(1)}%</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">{(avgRisk * 100).toFixed(1)}%</p>
           <p className="text-xs text-slate-400 mt-1">Powered by Advanced ML</p>
         </div>
       </div>
 
-      <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Invoices</h2>
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Recent Invoices</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
         <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
             <tr>
               <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Invoice</th>
               <th className="p-4 text-xs font-semibold text-slate-500 uppercase">Client</th>
@@ -75,10 +75,10 @@ export default async function Dashboard() {
             {allInvoices.map((inv) => {
               const riskLevel = getRiskLevel(inv.mlRiskScore || 0);
               return (
-                <tr key={inv.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 font-medium text-slate-900">{inv.invoiceNumber}</td>
-                  <td className="p-4 text-slate-600">{inv.clientName}</td>
-                  <td className="p-4 text-slate-900 font-medium">{formatCurrency(inv.totalAmount, inv.currency || "USD")}</td>
+                <tr key={inv.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-4 font-medium text-slate-900 dark:text-slate-100">{inv.invoiceNumber}</td>
+                  <td className="p-4 text-slate-600 dark:text-slate-400">{inv.clientName}</td>
+                  <td className="p-4 text-slate-900 dark:text-slate-100 font-medium">{formatCurrency(inv.totalAmount, inv.currency || "USD")}</td>
                   <td className="p-4">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       riskLevel === 'Low' ? 'bg-green-100 text-green-700' :

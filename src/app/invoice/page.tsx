@@ -1,0 +1,164 @@
+"use client";
+
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InvoiceSchema, InvoiceData } from "@/lib/validators";
+import { generateInvoiceNumber } from "@/lib/utils";
+import { InvoiceForm } from "@/components/InvoiceForm";
+import { InvoicePreview } from "@/components/InvoicePreview";
+import { Button } from "@/components/ui/button";
+import { Download, Send, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
+
+export default function InvoiceBuilder() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
+  const form = useForm<InvoiceData>({
+    resolver: zodResolver(InvoiceSchema),
+    defaultValues: {
+      invoiceNumber: generateInvoiceNumber(),
+      issueDate: format(new Date(), "yyyy-MM-dd"),
+      dueDate: format(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"), // 15 days later
+      items: [{ id: "1", description: "", quantity: 1, price: 0 }],
+      currency: "USD",
+      taxRate: 0,
+      discount: 0,
+    },
+  });
+
+  const watchAllFields = form.watch();
+
+  const handleDownloadPDF = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please fix the errors in the form before generating the PDF.");
+      return;
+    }
+
+    setIsGenerating(true);
+    const loadingToast = toast.loading("Generating your PDF...");
+
+    try {
+      const response = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(watchAllFields),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Invoice_${watchAllFields.invoiceNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.success("PDF generated successfully!", { id: loadingToast });
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while generating the PDF.", { id: loadingToast });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please fix the errors in the form before sending.");
+      return;
+    }
+
+    if (!watchAllFields.clientEmail) {
+      toast.error("Client email is required to send the invoice.");
+      form.setError("clientEmail", { type: "manual", message: "Client email is required" });
+      return;
+    }
+
+    setIsSending(true);
+    const loadingToast = toast.loading("Sending invoice to client...");
+
+    try {
+      const response = await fetch("/api/send-invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          invoiceData: watchAllFields,
+          recipientEmail: watchAllFields.clientEmail,
+          subject: `Invoice ${watchAllFields.invoiceNumber} from ${watchAllFields.senderName || "us"}`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to send email");
+      }
+
+      toast.success(`Invoice sent to ${watchAllFields.clientEmail} ✅`, { id: loadingToast });
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "An error occurred while sending the email.", { id: loadingToast });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Invoice Builder</h1>
+          <p className="text-slate-500 mt-1">Fill out the details on the left to see the live preview on the right.</p>
+        </div>
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <Button 
+            variant="outline" 
+            className="flex-1 lg:flex-none"
+            onClick={handleDownloadPDF}
+            disabled={isGenerating || isSending}
+          >
+            {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            Download PDF
+          </Button>
+          <Button 
+            className="flex-1 lg:flex-none"
+            onClick={handleSendEmail}
+            disabled={isGenerating || isSending}
+          >
+            {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+            Send via Email
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* Left Column: Form */}
+        <div className="space-y-6">
+          <InvoiceForm form={form} />
+        </div>
+
+        {/* Right Column: Preview */}
+        <div className="lg:sticky lg:top-8 border-4 border-slate-100 rounded-xl overflow-hidden bg-slate-100 p-2 sm:p-4">
+          <div className="bg-slate-100 pb-2 flex justify-between items-center px-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Live Preview</span>
+            <span className="text-xs text-slate-400">A4 Format</span>
+          </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[800px] origin-top-left transform scale-[0.6] sm:scale-[0.8] lg:scale-90 xl:scale-100 transition-transform">
+              <InvoicePreview data={watchAllFields} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InvoFlow: Smart Invoice Generator
 
-## Getting Started
+InvoFlow is a premium, serverless-ready web application for freelancers and small businesses to generate, preview, and email beautiful PDF invoices in seconds.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Dynamic Invoice Builder**: Real-time invoice preview that perfectly matches the final PDF output.
+- **Client-side Validated Forms**: Powered by `react-hook-form` and `zod` for robust data entry.
+- **Instant PDF Generation**: Uses `puppeteer-core` and `@sparticuz/chromium` to generate PDFs on-the-fly via Vercel's Serverless Functions.
+- **Direct Emailing**: Seamlessly send the generated PDF directly to clients using `nodemailer` and an SMTP service (e.g., Gmail).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack & Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js 14+ (App Router)**: Fast, full-stack React framework.
+- **Tailwind CSS v4 & Framer Motion**: For a premium, highly responsive user interface.
+- **@sparticuz/chromium**: **Why this instead of plain `puppeteer`?** Plain Puppeteer downloads a bundled version of Chromium that exceeds Vercel's 50MB free-tier serverless function limit. `@sparticuz/chromium` provides a compressed Brotli version specifically built for AWS Lambda/Vercel, ensuring the app deploys successfully on a free Vercel Hobby tier without exceeding limits.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local Setup
 
-## Learn More
+1. **Clone & Install Dependencies**
+   ```bash
+   git clone <repository>
+   cd invoflow
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Environment Variables**
+   Copy `.env.example` to `.env.local` and fill in your SMTP credentials.
+   ```bash
+   cp .env.example .env.local
+   ```
+   **How to get a Gmail App Password (Free SMTP)**:
+   - Go to your Google Account Settings -> Security.
+   - Enable 2-Step Verification.
+   - Search for "App Passwords" and generate a new password for "Mail".
+   - Put your Gmail address in `SMTP_USER` and the 16-digit password in `SMTP_PASS`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> **Note on Local PDF Generation**: 
+> `@sparticuz/chromium` doesn't always run smoothly on local Windows/Mac machines without a local binary. The code automatically attempts to use your local Chrome installation if `NODE_ENV === "development"`. If it fails locally, set `CHROME_EXECUTABLE_PATH` in your `.env.local` to point to your Chrome browser executable (e.g., `C:\Program Files\Google\Chrome\Application\chrome.exe`).
 
-## Deploy on Vercel
+## Deployment to Vercel (Free Hobby Tier)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This application is strictly optimized to deploy on Vercel's free Hobby plan. 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Push your code to GitHub**.
+2. **Import the repository into Vercel**.
+3. **Configure Environment Variables**: In the Vercel dashboard, before clicking Deploy, expand the Environment Variables section and add your `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, and `SMTP_PASS`.
+4. **Deploy!**
+
+**Vercel Configuration Notice**: The `vercel.json` file explicitly sets the API route `maxDuration` to `10` seconds (the maximum limit for Hobby users) to allow enough time for the PDF generation and email process.
+
+## Security Considerations
+
+- The app uses strictly typed validation schemas (`zod`) to sanitize incoming data.
+- The user inputs are encoded via `html-entities` before being injected into the HTML string for PDF rendering to prevent HTML/XSS injections.
+- Credentials are read via server environment variables, never exposed to the client bundle.

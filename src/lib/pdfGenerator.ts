@@ -17,18 +17,18 @@ export async function generatePDF(html: string): Promise<Buffer> {
       executablePath = await chromium.executablePath();
     }
 
+    const chromiumArgs = isLocal ? puppeteer.defaultArgs() : await Promise.resolve(chromium.args);
     browser = await puppeteer.launch({
-      args: isLocal ? puppeteer.defaultArgs() : chromium.args,
-      defaultViewport: chromium.defaultViewport,
+      args: chromiumArgs as string[],
       executablePath: executablePath || undefined,
-      headless: isLocal ? true : chromium.headless,
+      headless: true,
     });
 
     const page = await browser.newPage();
     
     // Set the HTML content
     await page.setContent(html, {
-      waitUntil: ["networkidle0", "domcontentloaded"],
+      waitUntil: "domcontentloaded",
     });
 
     // Emulate media type for printing

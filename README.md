@@ -8,11 +8,17 @@ InvoFlow is a premium, serverless-ready web application for freelancers and smal
 - **Client-side Validated Forms**: Powered by `react-hook-form` and `zod` for robust data entry.
 - **Instant PDF Generation**: Uses `puppeteer-core` and `@sparticuz/chromium` to generate PDFs on-the-fly via Vercel's Serverless Functions.
 - **Direct Emailing**: Seamlessly send the generated PDF directly to clients using `nodemailer` and an SMTP service (e.g., Gmail).
+- **Advanced Customization**: Switch between Minimal, Bold, and Classic PDF templates, and automatically convert line-item prices to live international currencies.
+- **AI-Powered OCR**: Upload an image of a physical receipt and automatically extract the line items and prices.
+- **Predictive Dashboard**: Save invoices to a local dashboard and instantly view the Machine Learning-powered Late Payment Risk Score.
+- **Automation Engine**: Vercel CRON job integration to automatically send reminders 3 days before an invoice is due or if it's overdue.
 
 ## Tech Stack & Architecture
 
 - **Next.js 14+ (App Router)**: Fast, full-stack React framework.
 - **Tailwind CSS v4 & Framer Motion**: For a premium, highly responsive user interface.
+- **better-sqlite3 & Drizzle ORM**: Used for the local dashboard and automation queues. (Can be swapped for PostgreSQL for production Vercel deployment).
+- **Tesseract.js**: Client-side OCR processing.
 - **@sparticuz/chromium**: **Why this instead of plain `puppeteer`?** Plain Puppeteer downloads a bundled version of Chromium that exceeds Vercel's 50MB free-tier serverless function limit. `@sparticuz/chromium` provides a compressed Brotli version specifically built for AWS Lambda/Vercel, ensuring the app deploys successfully on a free Vercel Hobby tier without exceeding limits.
 
 ## Local Setup

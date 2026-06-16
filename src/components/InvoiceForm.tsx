@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { LogoUpload } from "./LogoUpload";
 import { LineItemRow } from "./LineItemRow";
+import { ReceiptScanner } from "./ReceiptScanner";
 import { Plus } from "lucide-react";
 
 interface InvoiceFormProps {
@@ -108,8 +109,15 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
 
       {/* Line Items */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Line Items</CardTitle>
+          <ReceiptScanner onScanComplete={(items) => {
+            // Replace the default empty item if it's just 1 empty item
+            if (fields.length === 1 && !fields[0].description) {
+              remove(0);
+            }
+            items.forEach(item => append({ id: Date.now().toString() + Math.random(), ...item }));
+          }} />
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-4">
@@ -145,19 +153,61 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
           <CardTitle>Totals & Notes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
+              <Label htmlFor="templateStyle">Template Style</Label>
+              <select 
+                id="templateStyle" 
+                {...register("templateStyle")}
+                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                <option value="minimal">Minimal</option>
+                <option value="bold">Bold</option>
+                <option value="classic">Classic</option>
+              </select>
+            </div>
             <div>
               <Label htmlFor="currency">Currency</Label>
-              <select 
-                id="currency" 
-                {...register("currency")}
-                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-transparent"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="INR">INR (₹)</option>
-              </select>
+              <div className="flex gap-2">
+                <select 
+                  id="currency" 
+                  {...register("currency")}
+                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+                >
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="INR">INR (₹)</option>
+                </select>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="icon" 
+                  title="Convert Prices"
+                  onClick={async () => {
+                    const currentCurrency = watch("currency");
+                    const targetCurrency = prompt("Enter target currency code (e.g., EUR, GBP):")?.toUpperCase();
+                    if (!targetCurrency || targetCurrency === currentCurrency) return;
+                    
+                    try {
+                      const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${currentCurrency}`);
+                      const data = await res.json();
+                      const rate = data.rates[targetCurrency];
+                      if (!rate) throw new Error("Invalid currency code");
+                      
+                      const currentItems = watch("items");
+                      currentItems.forEach((item, index) => {
+                        setValue(`items.${index}.price`, Number((item.price * rate).toFixed(2)));
+                      });
+                      setValue("currency", targetCurrency, { shouldValidate: true });
+                    } catch (err) {
+                      alert("Failed to convert currency.");
+                    }
+                  }}
+                >
+                  $
+                </Button>
+              </div>
             </div>
             <div>
               <Label htmlFor="taxRate">Tax Rate (%)</Label>

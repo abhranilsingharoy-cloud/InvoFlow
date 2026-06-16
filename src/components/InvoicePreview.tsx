@@ -17,8 +17,15 @@ export function InvoicePreview({ data }: InvoicePreviewProps) {
   const formattedIssueDate = data.issueDate ? format(new Date(data.issueDate), 'MMM dd, yyyy') : '';
   const formattedDueDate = data.dueDate ? format(new Date(data.dueDate), 'MMM dd, yyyy') : '';
 
+  let containerClass = "bg-white p-8 sm:p-12 min-h-[800px] shadow-sm ring-1 ring-slate-200 text-slate-900 font-sans text-sm ";
+  if (data.templateStyle === 'bold') {
+    containerClass += "font-sans border-t-[16px] border-black text-gray-900";
+  } else if (data.templateStyle === 'classic') {
+    containerClass += "font-serif text-gray-800";
+  }
+
   return (
-    <div className="bg-white p-8 sm:p-12 min-h-[800px] shadow-sm ring-1 ring-slate-200 text-slate-900 font-sans text-sm">
+    <div className={containerClass}>
       {/* Header */}
       <div className="flex justify-between items-start mb-12">
         <div>

@@ -15,9 +15,10 @@ import { format } from "date-fns";
 export default function InvoiceBuilder() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<InvoiceData>({
-    resolver: zodResolver(InvoiceSchema),
+    resolver: zodResolver(InvoiceSchema) as any,
     defaultValues: {
       invoiceNumber: generateInvoiceNumber(),
       issueDate: format(new Date(), "yyyy-MM-dd"),
@@ -112,6 +113,32 @@ export default function InvoiceBuilder() {
     }
   };
 
+  const handleSave = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please fix the errors before saving.");
+      return;
+    }
+    
+    setIsSaving(true);
+    const loadingToast = toast.loading("Saving invoice to dashboard...");
+    
+    try {
+      const response = await fetch("/api/invoices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(watchAllFields),
+      });
+      
+      if (!response.ok) throw new Error("Failed to save");
+      toast.success("Invoice saved to dashboard! Automations active.", { id: loadingToast });
+    } catch (error) {
+      toast.error("Error saving invoice.", { id: loadingToast });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
@@ -119,12 +146,20 @@ export default function InvoiceBuilder() {
           <h1 className="text-3xl font-bold text-slate-900">Invoice Builder</h1>
           <p className="text-slate-500 mt-1">Fill out the details on the left to see the live preview on the right.</p>
         </div>
-        <div className="flex items-center gap-3 w-full lg:w-auto">
+        <div className="flex items-center gap-3 w-full lg:w-auto flex-wrap">
+          <Button 
+            variant="outline" 
+            onClick={handleSave}
+            disabled={isGenerating || isSending || isSaving}
+            className="border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100"
+          >
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "💾"} Save to Dashboard
+          </Button>
           <Button 
             variant="outline" 
             className="flex-1 lg:flex-none"
             onClick={handleDownloadPDF}
-            disabled={isGenerating || isSending}
+            disabled={isGenerating || isSending || isSaving}
           >
             {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
             Download PDF

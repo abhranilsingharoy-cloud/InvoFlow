@@ -17,13 +17,13 @@ export function LineItemRow({ index, register, errors, onRemove, canRemove }: Li
   const itemErrors = errors.items?.[index];
 
   return (
-    <div className="flex items-start gap-4 p-4 rounded-lg border border-slate-100 bg-slate-50 relative group">
+    <div className="flex items-start gap-4 p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 relative group">
       <div className="flex-1 space-y-4">
         <div>
           <Input
             placeholder="Item description"
             {...register(`items.${index}.description` as const)}
-            className="bg-white"
+            className="bg-transparent"
           />
           {itemErrors?.description && (
             <p className="text-red-500 text-xs mt-1">{itemErrors.description.message}</p>
@@ -37,7 +37,7 @@ export function LineItemRow({ index, register, errors, onRemove, canRemove }: Li
               step="0.01"
               placeholder="Qty"
               {...register(`items.${index}.quantity` as const)}
-              className="bg-white"
+              className="bg-transparent"
             />
             {itemErrors?.quantity && (
               <p className="text-red-500 text-xs mt-1">{itemErrors.quantity.message}</p>
@@ -49,7 +49,7 @@ export function LineItemRow({ index, register, errors, onRemove, canRemove }: Li
               step="0.01"
               placeholder="Price"
               {...register(`items.${index}.price` as const)}
-              className="bg-white"
+              className="bg-transparent"
             />
             {itemErrors?.price && (
               <p className="text-red-500 text-xs mt-1">{itemErrors.price.message}</p>

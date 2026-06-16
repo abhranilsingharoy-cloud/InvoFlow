@@ -1,101 +1,105 @@
-# InvoFlow: Smart Invoice Generator
+<div align="center">
+  <h1>🚀 InvoFlow: The Ultimate Smart Invoice Generator</h1>
+  <p><strong>Developed and Design by Abhranil Sinhgha Roy</strong></p>
+  <p>A premium, serverless-ready web application for freelancers and small businesses to generate, preview, and email beautiful PDF invoices in seconds. Powered by Advanced AI, OCR, and predictive Machine Learning.</p>
+</div>
 
-InvoFlow is a premium, serverless-ready web application for freelancers and small businesses to generate, preview, and email beautiful PDF invoices in seconds.
+---
 
-## Features
+## ✨ Advanced Features
 
-- **Dynamic Invoice Builder**: Real-time invoice preview that perfectly matches the final PDF output.
-- **Client-side Validated Forms**: Powered by `react-hook-form` and `zod` for robust data entry.
-- **Instant PDF Generation**: Uses `puppeteer-core` and `@sparticuz/chromium` to generate PDFs on-the-fly via Vercel's Serverless Functions.
-- **Direct Emailing**: Seamlessly send the generated PDF directly to clients using `nodemailer` and an SMTP service (e.g., Gmail).
-- **Advanced Customization**: Switch between Minimal, Bold, and Classic PDF templates, and automatically convert line-item prices to live international currencies.
-- **AI-Powered OCR**: Upload an image of a physical receipt and automatically extract the line items and prices.
-- **Predictive Dashboard**: Save invoices to a local dashboard and instantly view the Machine Learning-powered Late Payment Risk Score.
-- **Automation Engine**: Vercel CRON job integration to automatically send reminders 3 days before an invoice is due or if it's overdue.
+- 🎨 **Sleek UI with Dark/Light Mode**: A highly responsive, meticulously designed interface with a built-in Dark Mode toggle powered by `next-themes` and Tailwind CSS v4.
+- ⚡ **Dynamic Invoice Builder**: Real-time invoice preview that perfectly matches the final PDF output.
+- 🧾 **AI-Powered Receipt Scanner (OCR)**: Upload an image of a physical receipt, and Tesseract.js will automatically extract the line items and prices directly in your browser.
+- 🤖 **Predictive Dashboard (ML)**: Save invoices to a local database and instantly view the Machine Learning-powered "Late Payment Risk Score" for each client.
+- 🖌️ **5 Premium Templates**: Switch between **Minimal, Bold, Classic, Modern, and Elegant** PDF templates to match your brand's unique style.
+- 💱 **Live Currency Conversion**: Automatically convert line-item prices to international currencies using real-time API exchange rates.
+- 📄 **Instant PDF Generation**: Uses `puppeteer-core` and `@sparticuz/chromium` to generate highly customized, pixel-perfect PDFs on-the-fly via Vercel Serverless Functions.
+- ✉️ **Direct Emailing**: Seamlessly send the generated PDF directly to clients using `nodemailer` and an SMTP service (e.g., Gmail).
+- ⚙️ **Automations Engine**: Vercel CRON job integration to automatically scan pending invoices and send reminders 3 days before an invoice is due or if it's overdue.
 
-## Tech Stack & Architecture
+## 🛠️ Tech Stack & Architecture
 
-- **Next.js 14+ (App Router)**: Fast, full-stack React framework.
-- **Tailwind CSS v4 & Framer Motion**: For a premium, highly responsive user interface.
-- **better-sqlite3 & Drizzle ORM**: Used for the local dashboard and automation queues. (Can be swapped for PostgreSQL for production Vercel deployment).
-- **Tesseract.js**: Client-side OCR processing.
-- **@sparticuz/chromium**: **Why this instead of plain `puppeteer`?** Plain Puppeteer downloads a bundled version of Chromium that exceeds Vercel's 50MB free-tier serverless function limit. `@sparticuz/chromium` provides a compressed Brotli version specifically built for AWS Lambda/Vercel, ensuring the app deploys successfully on a free Vercel Hobby tier without exceeding limits.
+- **Core**: Next.js 14+ (App Router), React, TypeScript
+- **Styling**: Tailwind CSS v4, Framer Motion, `next-themes` (Dark Mode)
+- **Database**: `better-sqlite3` & Drizzle ORM (Easily swappable to Vercel Postgres/Neon)
+- **AI/ML**: Python (Random Forest training), JavaScript Heuristic Port, `Tesseract.js` (OCR)
+- **PDF Generation**: `@sparticuz/chromium` (Vercel-optimized headless browser)
+- **Validation**: Zod & `react-hook-form`
 
-## Project Structure
+## 📁 Project Structure
 
-The codebase is organized following modern Next.js 14 conventions:
+The codebase is engineered following an advanced Next.js 14 modular architecture:
 
 ```text
 InvoFlow/
 ├── .github/                 # CI/CD Workflows and PR Templates
 ├── ml/                      # Python Machine Learning scripts and synthetic data
-│   ├── models/              # Compiled .pkl models
-│   ├── inference.py         # Python inference tester
-│   └── train.py             # Random Forest training script
 ├── src/
-│   ├── app/                 # Next.js App Router Pages & API Routes
-│   │   ├── api/             # Serverless Functions (cron, pdf, email, db)
-│   │   ├── dashboard/       # ML Predictive Dashboard UI
-│   │   └── invoice/         # Main Invoice Builder UI
+│   ├── app/                 # Next.js App Router (Pages, Layouts, API Routes)
+│   │   ├── api/             # Serverless Functions (cron, pdf, email, invoices)
+│   │   ├── dashboard/       # ML Predictive Dashboard Page
+│   │   ├── invoice/         # Main Invoice Builder Page
+│   │   └── globals.css      # Core CSS tokens and Dark Mode variants
 │   ├── components/          # Reusable React Components
-│   │   ├── ui/              # Base UI primitives (Buttons, Cards, Inputs)
-│   │   └── ...              # Form, Preview, and Scanner components
+│   │   ├── ui/              # Base UI primitives (Buttons, Cards, Inputs) styled for Dark Mode
+│   │   └── ...              # Forms, Previews, Scanners, and Navigation
 │   ├── db/                  # Drizzle ORM Schema and Database connection
 │   └── lib/                 # Core Business Logic
 │       ├── mailer.ts        # Nodemailer config
 │       ├── ml.ts            # JS port of the ML late-payment heuristic
 │       ├── pdfGenerator.ts  # Headless Chromium PDF renderer
-│       ├── pdfTemplate.ts   # HTML/CSS Templates (Minimal, Bold, Classic)
-│       └── validators.ts    # Zod schemas for data validation
-├── public/                  # Static assets
-├── drizzle.config.ts        # Database migration config
-├── next.config.ts           # Next.js compiler config
-├── vercel.json              # Serverless execution timeouts & Cron schedule
-└── sqlite.db                # Local development database (ignored in prod)
+│       ├── pdfTemplate.ts   # HTML/CSS injection for the 5 Premium Templates
+│       ├── utils.ts         # Formatting & helper utilities
+│       └── validators.ts    # Strict Zod schemas for data validation
+├── public/                  # Static assets and fonts
+├── drizzle.config.ts        # Database migration configuration
+├── next.config.ts           # Next.js compiler configuration
+└── vercel.json              # Serverless execution timeouts & Cron schedules
 ```
 
-## Local Setup
+## 🚀 Local Setup
 
 1. **Clone & Install Dependencies**
    ```bash
-   git clone <repository>
-   cd invoflow
+   git clone https://github.com/abhranilsingharoy-cloud/InvoFlow.git
+   cd InvoFlow
    npm install
    ```
 
 2. **Environment Variables**
-   Copy `.env.example` to `.env.local` and fill in your SMTP credentials.
+   Copy `.env.example` to `.env.local` and configure your SMTP credentials for email delivery.
    ```bash
    cp .env.example .env.local
    ```
-   **How to get a Gmail App Password (Free SMTP)**:
-   - Go to your Google Account Settings -> Security.
-   - Enable 2-Step Verification.
-   - Search for "App Passwords" and generate a new password for "Mail".
-   - Put your Gmail address in `SMTP_USER` and the 16-digit password in `SMTP_PASS`.
+   *Note: For free Gmail SMTP, enable 2-Step Verification in Google Settings and generate an "App Password".*
 
-3. **Run the Development Server**
+3. **Initialize Local Database**
+   ```bash
+   npm run db:push
+   ```
+
+4. **Run the Development Server**
    ```bash
    npm run dev
    ```
-   Open [http://localhost:3000](http://localhost:3000) with your browser.
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 > **Note on Local PDF Generation**: 
-> `@sparticuz/chromium` doesn't always run smoothly on local Windows/Mac machines without a local binary. The code automatically attempts to use your local Chrome installation if `NODE_ENV === "development"`. If it fails locally, set `CHROME_EXECUTABLE_PATH` in your `.env.local` to point to your Chrome browser executable (e.g., `C:\Program Files\Google\Chrome\Application\chrome.exe`).
+> `@sparticuz/chromium` is optimized for Vercel. For local development, the code will automatically attempt to use your local Chrome installation. If PDF generation fails locally, set `CHROME_EXECUTABLE_PATH` in your `.env.local` to point to your Chrome browser executable.
 
-## Deployment to Vercel (Free Hobby Tier)
+## ☁️ Deployment (Vercel)
 
-This application is strictly optimized to deploy on Vercel's free Hobby plan. 
+This application is strictly optimized to deploy on **Vercel's free Hobby plan**. 
 
-1. **Push your code to GitHub**.
-2. **Import the repository into Vercel**.
-3. **Configure Environment Variables**: In the Vercel dashboard, before clicking Deploy, expand the Environment Variables section and add your `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, and `SMTP_PASS`.
-4. **Deploy!**
+1. Push your code to your GitHub repository.
+2. Import the repository into your Vercel dashboard.
+3. Configure Environment Variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`).
+4. **Important**: Because Vercel is serverless, the local `sqlite.db` will not persist across requests. You must swap the SQLite database for a cloud provider like **Vercel Postgres**, **Neon**, or **Turso** for the Dashboard and Automations to function correctly in production.
+5. Deploy!
 
-**Vercel Configuration Notice**: The `vercel.json` file explicitly sets the API route `maxDuration` to `10` seconds (the maximum limit for Hobby users) to allow enough time for the PDF generation and email process.
+## 🔒 Security Considerations
 
-## Security Considerations
-
-- The app uses strictly typed validation schemas (`zod`) to sanitize incoming data.
-- The user inputs are encoded via `html-entities` before being injected into the HTML string for PDF rendering to prevent HTML/XSS injections.
-- Credentials are read via server environment variables, never exposed to the client bundle.
+- **Strict Validation**: All API routes and forms use strongly-typed `zod` schemas.
+- **XSS Protection**: User inputs are encoded via `html-entities` before being injected into the HTML string for PDF rendering.
+- **Environment Isolation**: Credentials are read strictly via secure server environment variables.

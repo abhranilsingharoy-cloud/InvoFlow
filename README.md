@@ -21,6 +21,39 @@ InvoFlow is a premium, serverless-ready web application for freelancers and smal
 - **Tesseract.js**: Client-side OCR processing.
 - **@sparticuz/chromium**: **Why this instead of plain `puppeteer`?** Plain Puppeteer downloads a bundled version of Chromium that exceeds Vercel's 50MB free-tier serverless function limit. `@sparticuz/chromium` provides a compressed Brotli version specifically built for AWS Lambda/Vercel, ensuring the app deploys successfully on a free Vercel Hobby tier without exceeding limits.
 
+## Project Structure
+
+The codebase is organized following modern Next.js 14 conventions:
+
+```text
+InvoFlow/
+├── .github/                 # CI/CD Workflows and PR Templates
+├── ml/                      # Python Machine Learning scripts and synthetic data
+│   ├── models/              # Compiled .pkl models
+│   ├── inference.py         # Python inference tester
+│   └── train.py             # Random Forest training script
+├── src/
+│   ├── app/                 # Next.js App Router Pages & API Routes
+│   │   ├── api/             # Serverless Functions (cron, pdf, email, db)
+│   │   ├── dashboard/       # ML Predictive Dashboard UI
+│   │   └── invoice/         # Main Invoice Builder UI
+│   ├── components/          # Reusable React Components
+│   │   ├── ui/              # Base UI primitives (Buttons, Cards, Inputs)
+│   │   └── ...              # Form, Preview, and Scanner components
+│   ├── db/                  # Drizzle ORM Schema and Database connection
+│   └── lib/                 # Core Business Logic
+│       ├── mailer.ts        # Nodemailer config
+│       ├── ml.ts            # JS port of the ML late-payment heuristic
+│       ├── pdfGenerator.ts  # Headless Chromium PDF renderer
+│       ├── pdfTemplate.ts   # HTML/CSS Templates (Minimal, Bold, Classic)
+│       └── validators.ts    # Zod schemas for data validation
+├── public/                  # Static assets
+├── drizzle.config.ts        # Database migration config
+├── next.config.ts           # Next.js compiler config
+├── vercel.json              # Serverless execution timeouts & Cron schedule
+└── sqlite.db                # Local development database (ignored in prod)
+```
+
 ## Local Setup
 
 1. **Clone & Install Dependencies**

@@ -164,6 +164,8 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
                 <option value="minimal">Minimal</option>
                 <option value="bold">Bold</option>
                 <option value="classic">Classic</option>
+                <option value="modern">Modern</option>
+                <option value="elegant">Elegant</option>
               </select>
             </div>
             <div>

@@ -2,6 +2,7 @@ import { InvoiceData } from "./validators";
 import { formatCurrency, calculateTotals } from "./utils";
 import { encode } from "html-entities";
 import { format } from "date-fns";
+import { translations } from "./translations";
 
 export function generateInvoiceHTML(data: InvoiceData): string {
   const { subtotal, taxAmount, discountAmount, total } = calculateTotals(
@@ -13,6 +14,8 @@ export function generateInvoiceHTML(data: InvoiceData): string {
   const safeStr = (str: string | undefined | null) => encode(str || "");
   const formattedIssueDate = data.issueDate ? format(new Date(data.issueDate), 'MMM dd, yyyy') : '';
   const formattedDueDate = data.dueDate ? format(new Date(data.dueDate), 'MMM dd, yyyy') : '';
+  const lang = data.language && data.language in translations ? data.language as keyof typeof translations : "en";
+  const t = translations[lang];
 
   let cssVariables = '';
   let layoutClass = '';
@@ -116,28 +119,28 @@ export function generateInvoiceHTML(data: InvoiceData): string {
       <div class="header">
         <div>${data.logoUrl ? `<img src="${data.logoUrl}" class="logo" />` : ''}</div>
         <div>
-          <h1 class="invoice-title">INVOICE</h1>
+          <h1 class="invoice-title">${t.invoice}</h1>
           <div class="text-right" style="margin-top: 4px;">${safeStr(data.invoiceNumber)}</div>
         </div>
       </div>
 
       <div class="details-grid">
         <div class="details-col">
-          <div class="details-title">From</div>
+          <div class="details-title">${t.from}</div>
           <strong>${safeStr(data.senderName)}</strong>
           ${data.senderEmail ? `<div>${safeStr(data.senderEmail)}</div>` : ''}
           ${data.senderAddress ? `<div>${safeStr(data.senderAddress)}</div>` : ''}
         </div>
         <div class="details-col">
-          <div class="details-title">To</div>
+          <div class="details-title">${t.to}</div>
           <strong>${safeStr(data.clientName)}</strong>
           <div>${safeStr(data.clientEmail)}</div>
           ${data.clientAddress ? `<div>${safeStr(data.clientAddress)}</div>` : ''}
         </div>
         <div class="details-col">
           <div class="meta-grid">
-            <div><div class="details-title">Issue Date</div><div>${formattedIssueDate}</div></div>
-            <div><div class="details-title">Due Date</div><div>${formattedDueDate}</div></div>
+            <div><div class="details-title">${t.issueDate}</div><div>${formattedIssueDate}</div></div>
+            <div><div class="details-title">${t.dueDate}</div><div>${formattedDueDate}</div></div>
           </div>
         </div>
       </div>
@@ -145,7 +148,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
       <table>
         <thead>
           <tr>
-            <th>Description</th><th class="text-center">Qty</th><th class="text-right">Price</th><th class="text-right">Amount</th>
+            <th>${t.description}</th><th class="text-center">${t.qty}</th><th class="text-right">${t.price}</th><th class="text-right">${t.amount}</th>
           </tr>
         </thead>
         <tbody>
@@ -162,16 +165,19 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 
       <div class="totals-container">
         <table class="totals-table">
-          <tr><td>Subtotal</td><td class="text-right">${formatCurrency(subtotal, data.currency)}</td></tr>
-          ${data.discount > 0 ? `<tr><td>Discount</td><td class="text-right">-${formatCurrency(discountAmount, data.currency)}</td></tr>` : ''}
-          ${data.taxRate > 0 ? `<tr><td>Tax</td><td class="text-right">${formatCurrency(taxAmount, data.currency)}</td></tr>` : ''}
-          <tr class="total-row"><td>Total</td><td class="text-right">${formatCurrency(total, data.currency)}</td></tr>
+          <tr><td>${t.subtotal}</td><td class="text-right">${formatCurrency(subtotal, data.currency)}</td></tr>
+          ${data.discount > 0 ? `<tr><td>${t.discount}</td><td class="text-right">-${formatCurrency(discountAmount, data.currency)}</td></tr>` : ''}
+          ${data.taxRate > 0 ? `<tr><td>${t.tax}</td><td class="text-right">${formatCurrency(taxAmount, data.currency)}</td></tr>` : ''}
+          <tr class="total-row"><td>${t.total}</td><td class="text-right">${formatCurrency(total, data.currency)}</td></tr>
         </table>
       </div>
 
-      <div class="footer">
-        ${data.notes ? `<div style="margin-bottom:16px;"><strong>Notes:</strong><br>${safeStr(data.notes)}</div>` : ''}
-        ${data.paymentTerms ? `<div><strong>Payment Terms:</strong><br>${safeStr(data.paymentTerms)}</div>` : ''}
+      <div class="footer" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          ${data.notes ? `<div style="margin-bottom:16px;"><strong>${t.notes}</strong><br>${safeStr(data.notes)}</div>` : ''}
+          ${data.paymentTerms ? `<div><strong>${t.paymentTerms}</strong><br>${safeStr(data.paymentTerms)}</div>` : ''}
+        </div>
+        ${data.paymentLink ? `<div><img src="https://quickchart.io/qr?text=${encodeURIComponent(data.paymentLink)}&size=100" style="width:100px; height:100px; border-radius: 8px;" /></div>` : ''}
       </div>
     </body>
     </html>

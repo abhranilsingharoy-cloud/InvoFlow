@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 import { AlertCircle, FileText, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DashboardCharts } from "./DashboardCharts";
 
 export const dynamic = 'force-dynamic';
 
@@ -58,6 +59,8 @@ export default async function Dashboard() {
           <p className="text-xs text-slate-400 mt-1">Powered by Advanced ML</p>
         </div>
       </div>
+
+      <DashboardCharts invoices={allInvoices.map(inv => ({ invoiceNumber: inv.invoiceNumber, totalAmount: inv.totalAmount, status: inv.status || "pending" }))} />
 
       <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Recent Invoices</h2>
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">

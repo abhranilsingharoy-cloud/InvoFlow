@@ -27,6 +27,8 @@ export const InvoiceSchema = z.object({
   taxRate: z.coerce.number().min(0).default(0),
   discount: z.coerce.number().min(0).default(0),
   templateStyle: z.enum(["minimal", "bold", "classic", "modern", "elegant"]).default("minimal"),
+  language: z.enum(["en", "es", "fr", "de"]).default("en"),
+  paymentLink: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   
   notes: z.string().optional(),
   paymentTerms: z.string().optional(),

@@ -216,6 +216,19 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
               <Input id="taxRate" type="number" step="0.01" {...register("taxRate")} />
             </div>
             <div>
+              <Label htmlFor="language">Language</Label>
+              <select 
+                id="language" 
+                {...register("language")}
+                className="flex h-10 w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+              </select>
+            </div>
+            <div>
               <Label htmlFor="discount">Discount Amount</Label>
               <Input id="discount" type="number" step="0.01" {...register("discount")} />
             </div>
@@ -229,6 +242,17 @@ export function InvoiceForm({ form }: InvoiceFormProps) {
               className="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 mt-2"
               placeholder="Thanks for your business!"
             />
+          </div>
+          <div>
+            <Label htmlFor="paymentLink">Payment Link (QR Code)</Label>
+            <Input 
+              id="paymentLink" 
+              type="url" 
+              {...register("paymentLink")} 
+              placeholder="https://paypal.me/yourname"
+              className="mt-2"
+            />
+            {errors.paymentLink && <p className="text-red-500 text-xs mt-1">{errors.paymentLink.message}</p>}
           </div>
           <div>
             <Label htmlFor="paymentTerms">Payment Terms</Label>
